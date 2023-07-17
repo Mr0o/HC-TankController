@@ -11,9 +11,9 @@ DEFAULT_IP = '10.10.1.1'
 
 try:
     print(f"\nConnecting to {DEFAULT_IP}:{CONTROL_PORT} ...")
-    tn = telnetlib.Telnet(DEFAULT_IP, CONTROL_PORT)
+    tn = telnetlib.Telnet(DEFAULT_IP, CONTROL_PORT, timeout=10)
 except:
-    print(f"Failed to connect to {DEFAULT_IP}:{CONTROL_PORT} ...")
+    print(f"Failed to connect to {DEFAULT_IP}:{CONTROL_PORT}")
     exit()
 
 print(f"Connected to {DEFAULT_IP}:{CONTROL_PORT}")
