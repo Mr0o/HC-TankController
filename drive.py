@@ -183,8 +183,11 @@ while running:
         # test if we have been idle for 15 seconds, if so send a command to keep the tank alive
         if time.time() - idleTimer > 15:
             print("Keep alive...")
-            sendCommand(L_FORWARD)
-            sendCommand(STOPALL)
+            sendCommand(CAMUP)
+            time.sleep(0.2)
+            sendCommand(CAMDOWN)
+            time.sleep(0.2)
+            sendCommand(CAMSTOP)
             idleTimer = time.time()
 
     # update WIDHT and HEIGHT in case the window was resized
