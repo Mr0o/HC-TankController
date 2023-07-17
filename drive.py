@@ -61,16 +61,47 @@ STOPALL = L_STOP + R_STOP + CAMSTOP
 command = ""
 
 def filterCommand(command: str) -> str:
-    # remove and conflicting commands (e.g. forward and backward at the same time)
+    # replace duplicate commands
+    if L_FORWARD + L_FORWARD in command:
+        command = command.replace(L_FORWARD + L_FORWARD, L_FORWARD)
+    if L_BACKWARD + L_BACKWARD in command:
+        command = command.replace(L_BACKWARD + L_BACKWARD, L_BACKWARD)
+    if R_FORWARD + R_FORWARD in command:
+        command = command.replace(R_FORWARD + R_FORWARD, R_FORWARD)
+    if R_BACKWARD + R_BACKWARD in command:
+        command = command.replace(R_BACKWARD + R_BACKWARD, R_BACKWARD)
+    if CAMUP + CAMUP in command:
+        command = command.replace(CAMUP + CAMUP, CAMUP)
+    if CAMDOWN + CAMDOWN in command:
+        command = command.replace(CAMDOWN + CAMDOWN, CAMDOWN)
+    # remove commands that are overriden by other commands
     if L_FORWARD in command and L_BACKWARD in command:
-        command = command.replace(L_FORWARD, "")
-        command = command.replace(L_BACKWARD, "")
+        command = command.replace(L_BACKWARD, L_STOP)
+    if L_BACKWARD in command and L_FORWARD in command:
+        command = command.replace(L_FORWARD, L_STOP)
     if R_FORWARD in command and R_BACKWARD in command:
-        command = command.replace(R_FORWARD, "")
-        command = command.replace(R_BACKWARD, "")
+        command = command.replace(R_BACKWARD, R_STOP)
+    if R_BACKWARD in command and R_FORWARD in command:
+        command = command.replace(R_FORWARD, R_STOP)
     if CAMUP in command and CAMDOWN in command:
+        command = command.replace(CAMDOWN, CAMSTOP)
+    if CAMDOWN in command and CAMUP in command:
+        command = command.replace(CAMUP, CAMSTOP)
+    # remove commands that are not needed
+    if L_STOP in command and L_FORWARD in command:
+        command = command.replace(L_FORWARD, "")
+    if L_STOP in command and L_BACKWARD in command:
+        command = command.replace(L_BACKWARD, "")
+    if R_STOP in command and R_FORWARD in command:
+        command = command.replace(R_FORWARD, "")
+    if R_STOP in command and R_BACKWARD in command:
+        command = command.replace(R_BACKWARD, "")
+    if CAMSTOP in command and CAMUP in command:
         command = command.replace(CAMUP, "")
+    if CAMSTOP in command and CAMDOWN in command:
         command = command.replace(CAMDOWN, "")
+    # remove spaces
+    command = command.replace(" ", "")
     return command
 
 def sendCommand(command: str, tn=tn) -> None:
@@ -121,9 +152,28 @@ while running:
                 sendCommand(STOPALL)
                 running = False
         if event.type == pygame.KEYUP:
-            sendCommand(STOPALL)
-            command = ""
+            # remove the command from the command string
+            if event.key == pygame.K_w:
+                command = command.replace(L_FORWARD + R_FORWARD, "")
+                sendCommand(L_STOP + R_STOP)
+            if event.key == pygame.K_s:
+                command = command.replace(L_BACKWARD + R_BACKWARD, "")
+                sendCommand(L_STOP + R_STOP)
+            if event.key == pygame.K_a:
+                command = command.replace(R_FORWARD + L_BACKWARD, "")
+                sendCommand(L_STOP + R_STOP)
+            if event.key == pygame.K_d:
+                command = command.replace(L_FORWARD + R_BACKWARD, "")
+                sendCommand(L_STOP + R_STOP)
+            if event.key == pygame.K_q:
+                command = command.replace(CAMUP, "")
+                sendCommand(CAMSTOP)
+            if event.key == pygame.K_e:
+                command = command.replace(CAMDOWN, "")
+                sendCommand(CAMSTOP)
+            
 
+    # send the command to the tank
     if command:
         sendCommand(command)
         # reset idle timer
@@ -194,8 +244,8 @@ while running:
         screen.blit(text, (pygame.display.get_window_size()[0] - text.get_width() - 10, 30))
 
 
-        # set the caption
-        pygame.display.set_caption(f"Tank Controller - {int(WIDTH)}x{int(HEIGHT)}")
+        # update window title
+        pygame.display.set_caption(f"Tank Controller - {int(clock.get_fps())} fps")
 
         clock.tick(30)
         pygame.display.update()
