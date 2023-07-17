@@ -33,6 +33,11 @@ pygame.init()
 WIDTH = 800
 HEIGHT = int(WIDTH * 3 / 4)
 
+# get the resolution of the display for fullscreen mode
+displayInfo = pygame.display.Info()
+FULLSCREEN_WIDTH = displayInfo.current_w
+FULLSCREEN_HEIGHT = displayInfo.current_h
+
 # create the screen and allow resizing
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE, vsync=True)
 clock = pygame.time.Clock()
@@ -100,6 +105,18 @@ while running:
                 command += CAMDOWN
             if event.key == pygame.K_SPACE:
                 takeScreenshot = True
+            if event.key == pygame.K_F11:
+                # check if we are already in fullscreen mode
+                if screen.get_flags() & pygame.FULLSCREEN:
+                    # switch to windowed mode
+                    pygame.display.quit()
+                    pygame.display.init()
+                    pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE, vsync=True)
+                else:
+                    # switch to fullscreen mode
+                    pygame.display.quit()
+                    pygame.display.init()
+                    screen = pygame.display.set_mode((FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT), pygame.FULLSCREEN, vsync=True)
             if event.key == pygame.K_ESCAPE:
                 sendCommand(STOPALL)
                 running = False
@@ -139,6 +156,8 @@ while running:
         # convert the image to a pygame image
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         frame = pygame.surfarray.make_surface(frame)
+        # flip frame
+        frame = pygame.transform.flip(frame, False, True)
         # rotate frame
         frame = pygame.transform.rotate(frame, 270)
         # scale frame
@@ -166,6 +185,9 @@ while running:
 
         text = font.render(command, True, (255, 255, 255))
         screen.blit(text, (10, 50))
+
+        # set the caption
+        pygame.display.set_caption(f"Tank Controller - {int(WIDTH)}x{int(HEIGHT)}")
 
         clock.tick(60)
         pygame.display.update()
