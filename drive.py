@@ -195,6 +195,9 @@ while running:
         WIDTH = HEIGHT * 4 / 3
     else:
         HEIGHT = WIDTH * 3 / 4
+
+    # draw background
+    screen.fill((0, 0, 0))
     
     # get the image from the camera
     ret, frame = video.read()
@@ -217,35 +220,32 @@ while running:
         frameRect = frame.get_rect()
         frameRect.center = (pygame.display.get_surface().get_size()[0] / 2, pygame.display.get_surface().get_size()[1] / 2)
 
-        # draw background
-        screen.fill((0, 0, 0))
-
         # draw frame
         screen.blit(frame, frameRect)
 
-        # load font for text
-        font = pygame.font.SysFont("Arial", 15, bold=True)
+    # load font for text
+    font = pygame.font.SysFont("Arial", 15, bold=True)
 
-        # help text
-        text = font.render("Use WASD keys to move the tank", True, (255, 255, 255))
-        screen.blit(text, (10, 10))
+    # help text
+    text = font.render("Use WASD keys to move the tank", True, (255, 255, 255))
+    screen.blit(text, (10, 10))
 
-        text = font.render("Use Q and E keys to move the camera", True, (255, 255, 255))
-        screen.blit(text, (10, 30))
+    text = font.render("Use Q and E keys to move the camera", True, (255, 255, 255))
+    screen.blit(text, (10, 30))
 
-        # draw command
-        text = font.render(command, True, (255, 255, 255))
-        screen.blit(text, (10, 50))
+    # draw command
+    text = font.render(command, True, (255, 255, 255))
+    screen.blit(text, (10, 50))
 
-        # draw performance metrics in the top right corner
-        text = font.render(f"{round(clock.get_time(), 2)}ms", True, (255, 255, 255))
-        screen.blit(text, (pygame.display.get_window_size()[0] - text.get_width() - 10, 10))
-        text = font.render(f"{int(clock.get_fps())} fps", True, (255, 255, 255))
-        screen.blit(text, (pygame.display.get_window_size()[0] - text.get_width() - 10, 30))
+    # draw performance metrics in the top right corner
+    text = font.render(f"{round(clock.get_time(), 2)}ms", True, (255, 255, 255))
+    screen.blit(text, (pygame.display.get_window_size()[0] - text.get_width() - 10, 10))
+    text = font.render(f"{int(clock.get_fps())} fps", True, (255, 255, 255))
+    screen.blit(text, (pygame.display.get_window_size()[0] - text.get_width() - 10, 30))
 
 
-        # update window title
-        pygame.display.set_caption(f"Tank Controller - {int(clock.get_fps())} fps")
+    # update window title
+    pygame.display.set_caption(f"Tank Controller - {int(clock.get_fps())} fps")
 
-        clock.tick(30)
-        pygame.display.update()
+    clock.tick(30)
+    pygame.display.update()
