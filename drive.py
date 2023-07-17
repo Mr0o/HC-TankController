@@ -111,7 +111,7 @@ while running:
                     # switch to windowed mode
                     pygame.display.quit()
                     pygame.display.init()
-                    pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE, vsync=True)
+                    screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE, vsync=True)
                 else:
                     # switch to fullscreen mode
                     pygame.display.quit()
@@ -183,11 +183,19 @@ while running:
         text = font.render("Use Q and E keys to move the camera", True, (255, 255, 255))
         screen.blit(text, (10, 30))
 
+        # draw command
         text = font.render(command, True, (255, 255, 255))
         screen.blit(text, (10, 50))
+
+        # draw performance metrics in the top right corner
+        text = font.render(f"{round(clock.get_time(), 2)}ms", True, (255, 255, 255))
+        screen.blit(text, (pygame.display.get_window_size()[0] - text.get_width() - 10, 10))
+        text = font.render(f"{int(clock.get_fps())} fps", True, (255, 255, 255))
+        screen.blit(text, (pygame.display.get_window_size()[0] - text.get_width() - 10, 30))
+
 
         # set the caption
         pygame.display.set_caption(f"Tank Controller - {int(WIDTH)}x{int(HEIGHT)}")
 
-        clock.tick(60)
+        clock.tick(30)
         pygame.display.update()
