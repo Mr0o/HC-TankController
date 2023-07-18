@@ -5,11 +5,8 @@
 <br/>
 
 
-## Download the project
+### <a href="https://github.com/Mr0o/HC-TankController/archive/refs/heads/main.zip" target="_top">Download Link</a>
 
-<a href="https://github.com/Mr0o/HC-TankController/archive/refs/heads/main.zip" target="_top">Download Link</a>
-
-<br/>
 
 ## How to use
 
