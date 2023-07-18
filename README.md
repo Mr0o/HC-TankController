@@ -6,7 +6,7 @@
 
 ## Download the project
 
-### [Download link]("https://github.com/Mr0o/HC-TankController/archive/refs/heads/main.zip")
+### [Download link](https://github.com/Mr0o/HC-TankController/archive/refs/heads/main.zip)
 
 <br/>
 
