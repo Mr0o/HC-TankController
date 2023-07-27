@@ -9,24 +9,6 @@ CONTROL_PORT = 8150
 VIDEO_PORT = 8196
 DEFAULT_IP = '10.10.1.1'
 
-try:
-    print(f"\nConnecting to {DEFAULT_IP}:{CONTROL_PORT} ...")
-    tn = telnetlib.Telnet(DEFAULT_IP, CONTROL_PORT, timeout=10)
-except:
-    print(f"Failed to connect to {DEFAULT_IP}:{CONTROL_PORT}")
-    exit()
-
-print(f"Connected to {DEFAULT_IP}:{CONTROL_PORT}")
-
-print(f"Establishing video capture at {DEFAULT_IP}:{VIDEO_PORT} ...")
-# get the ip camera stream from the tank
-try:
-    video = cv2.VideoCapture(f"http://{DEFAULT_IP}:{VIDEO_PORT}") 
-except Exception as e:
-    print(f"Failed to connect to {DEFAULT_IP}:{VIDEO_PORT} ...")
-    print(str(e))
-    exit()
-
 # init pygame
 pygame.init()
 
@@ -43,6 +25,43 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE, vsync=True)
 clock = pygame.time.Clock()
 
 pygame.display.set_caption("Tank Controller")
+
+def drawText(text: str, x: int, y: int, color: tuple, size: int = 15, bold: bool = False, clear: bool = False) -> None:
+    if clear:   screen.fill((0, 0, 0))
+    font = pygame.font.SysFont("Arial", size, bold=bold)
+    text = font.render(text, True, color)
+    screen.blit(text, (x - text.get_width() / 2, y - text.get_height() / 2))
+    pygame.display.update()
+
+try:
+    print(f"\nConnecting to {DEFAULT_IP}:{CONTROL_PORT} ...")
+    drawText(f"Connecting to {DEFAULT_IP}:{CONTROL_PORT} ...", WIDTH / 2, HEIGHT / 2, (255, 255, 255), 30, True)
+    tn = telnetlib.Telnet(DEFAULT_IP, CONTROL_PORT, timeout=10)
+except TimeoutError:
+    print(f"Failed to connect to {DEFAULT_IP}:{CONTROL_PORT}")
+    print("Connection timed out")
+    drawText(f"Failed to connect to {DEFAULT_IP}:{CONTROL_PORT}", WIDTH / 2, HEIGHT / 2, (255, 255, 255), 30, True, True)
+    drawText("Connection timed out", WIDTH / 2, HEIGHT / 2 + 30, (255, 255, 255), 30, True)
+    time.sleep(2.5)
+    exit()
+except Exception as e:
+    print(f"Failed to connect to {DEFAULT_IP}:{CONTROL_PORT}")
+    drawText(f"Failed to connect to {DEFAULT_IP}:{CONTROL_PORT}", WIDTH / 2, HEIGHT / 2, (255, 255, 255), 30, True, True)
+    print("Exception: " + str(e))
+    drawText("Exception: " + str(e), WIDTH / 2, HEIGHT / 2 + 30, (255, 255, 255), 30, True)
+    time.sleep(2.5)
+    exit()
+
+print(f"Connected to {DEFAULT_IP}:{CONTROL_PORT}")
+
+print(f"Establishing video capture at {DEFAULT_IP}:{VIDEO_PORT} ...")
+# get the ip camera stream from the tank
+try:
+    video = cv2.VideoCapture(f"http://{DEFAULT_IP}:{VIDEO_PORT}") 
+except Exception as e:
+    print(f"Failed to connect to {DEFAULT_IP}:{VIDEO_PORT} ...")
+    print(str(e))
+    exit()
 
 tn.write(b"t1\n") # send hello to tank
 
