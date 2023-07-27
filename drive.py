@@ -1,13 +1,32 @@
+DEFAULT_IP = '10.10.1.1'
+CONTROL_PORT = 8150
+VIDEO_PORT = 8196
+
+import sys
+# check for IP argument
+if len(sys.argv) > 1:
+    DEFAULT_IP = sys.argv[1]
+# check for control port argument
+if len(sys.argv) > 2:
+    CONTROL_PORT = int(sys.argv[2])
+# check for video port argument
+if len(sys.argv) > 3:
+    VIDEO_PORT = int(sys.argv[3])
+
+# check for help argument
+if "-h" in sys.argv or "--help" in sys.argv:
+    print("Usage: python3 drive.py [IP] [CONTROL_PORT] [VIDEO_PORT]")
+    print("IP: IP address of the tank")
+    print("CONTROL_PORT: Port for telnet")
+    print("VIDEO_PORT: Port for video stream")
+    exit()
+
 import telnetlib
 import time
 import pygame # for input and drawing
 
 # we will use the wonderful openCV library to capture images from the camera
 import cv2
-
-CONTROL_PORT = 8150
-VIDEO_PORT = 8196
-DEFAULT_IP = '10.10.1.1'
 
 # init pygame
 pygame.init()
